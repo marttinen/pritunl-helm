@@ -1,0 +1,21 @@
+---
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: "{{ .Release.Name }}-config"
+  labels:
+    app.kubernetes.io/name: "{{ .Release.Name }}"
+data:
+  PRITUNL_DONT_WRITE_CONFIG: "true"
+  PRITUNL_MONGODB_URI: "none"
+  pritunl.conf: |
+    {
+      "static_cache": true,
+      "port": 443,
+      "temp_path": "/tmp/pritunl_%r",
+      "log_path": "/var/log/pritunl.log",
+      "www_path": "/usr/share/pritunl/www",
+      "bind_addr": "0.0.0.0",
+      "mongodb_uri": "{{ .Values.mongodbUri }}",
+      "local_address_interface": "auto"
+    }
