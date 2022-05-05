@@ -1,0 +1,10 @@
+
+image: "jippi/pritunl:latest"
+
+mongodbUri: "mongodb://localhost:27015"
+
+replicas: 2
+
+externalDns:
+  enabled: false
+  hostname: ""
