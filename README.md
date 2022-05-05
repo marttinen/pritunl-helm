@@ -4,6 +4,12 @@ Basic Pritunl VPN Helm Chart.
 
 Currently only supports OpenVPN via TCP on port 1194.
 
+## Dependencies
+
+Have a running MongoDB instance with a dedicated user for pritunl (recommended).
+
+For example the [bitnami MongoDB helm chart](https://artifacthub.io/packages/helm/bitnami/mongodb) works well (had no luck using AWS DocumentDB).
+
 ## Possible improvements
 
 - fine tune resource requests and limits
