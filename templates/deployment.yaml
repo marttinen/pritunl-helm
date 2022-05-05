@@ -1,0 +1,70 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: "{{ .Release.Name }}"
+  labels:
+    app.kubernetes.io/name: "{{ .Release.Name }}"
+spec:
+  replicas: {{ .Values.replicas }}
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: "{{ .Release.Name }}"
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: "{{ .Release.Name }}"
+    spec:
+      volumes:
+        - name: "{{ .Release.Name }}-config"
+          configMap:
+            name: "{{ .Release.Name }}-config"
+      containers:
+        - name: "pritunl"
+          image: "{{ .Values.image }}"
+          envFrom:
+            - configMapRef:
+                name: "{{ .Release.Name }}-config"
+          volumeMounts:
+            - name: "{{ .Release.Name }}-config"
+              readOnly: true
+              mountPath: /etc/pritunl.conf
+              subPath: pritunl.conf
+          ports:
+            - name: http
+              containerPort: 80
+              protocol: TCP
+            - name: https
+              containerPort: 443
+              protocol: TCP
+            - name: vpn
+              containerPort: 1194
+              protocol: TCP
+          resources:
+            limits:
+              cpu: 4000m
+              memory: 4Gi
+            requests:
+              cpu: 1000m
+              memory: 1Gi
+          livenessProbe:
+            httpGet:
+              path: /check
+              port: 443
+              scheme: HTTPS
+            timeoutSeconds: 5
+            periodSeconds: 30
+            successThreshold: 1
+            failureThreshold: 3
+          imagePullPolicy: IfNotPresent
+          securityContext:
+            privileged: true
+      restartPolicy: Always
+      terminationGracePeriodSeconds: 30
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 1
+      maxSurge: 25%
+  revisionHistoryLimit: 10
+  progressDeadlineSeconds: 600
