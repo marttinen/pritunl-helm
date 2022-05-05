@@ -1,4 +1,4 @@
-# pritunl-helm-chart
+# Pritunl VPN Server Helm Chart
 
 Basic Pritunl VPN Helm Chart. Only implements OpenVPN on 1194/TCP.
 
